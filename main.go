@@ -14,7 +14,7 @@
 
 package main
 
-import "iir/cmd"
+import "github.com/psucodervn/iir/cmd"
 
 func main() {
 	cmd.Execute()
