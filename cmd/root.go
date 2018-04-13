@@ -34,7 +34,7 @@ var (
 var rootCmd = &cobra.Command{
 	Use:   "irr",
 	Short: "Online judge helper",
-	Long: `irr is an online judge helper, which help you auto parsing and testing.
+	Long: `irr is an online judge helper, which helps you in parsing and testing.
 'irr' is stand for Is It Rated? :).`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
