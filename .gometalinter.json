@@ -1,3 +1,13 @@
 {
-  "Format": "{{.Path}}:{{.Line}}:{{if .Col}}{{.Col}}{{end}}:{{.Severity}}: {{.Message}} ({{.Linter}})"
+  "Format": "{{.Path}}:{{.Line}}:{{if .Col}}{{.Col}}{{end}}:{{.Severity}}: {{.Message}} ({{.Linter}})",
+  "Enables": [
+    "golint",
+    "interfacer",
+    "goconst",
+    "maligned",
+    "gosimple"
+  ],
+  "Disable": [
+    "megacheck"
+  ]
 }
