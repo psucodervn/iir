@@ -5,6 +5,9 @@ go:
 
 go_import_path: github.com/psucodervn/iir
 
+env:
+  - COVERALLS_TOKEN=zZDmfDHfo4L0EWiVrVmxu7YZFZ7UsbAlR
+
 cache:
   directories:
     - $GOPATH/pkg/dep
