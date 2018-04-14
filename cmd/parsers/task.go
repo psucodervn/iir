@@ -1,4 +1,4 @@
-package cmd
+package parsers
 
 // TestCase struct
 type TestCase struct {
@@ -48,12 +48,12 @@ func (task *DefaultTask) SetTestCases(testCases []TestCase) {
 	task.testCases = testCases
 }
 
-//SetTimeLimit set task time limit
+// SetTimeLimit set task time limit
 func (task *DefaultTask) SetTimeLimit(timeLimit int64) {
 	task.timeLimit = timeLimit
 }
 
-//SetMemoryLimit set task memory limit
+// SetMemoryLimit set task memory limit
 func (task *DefaultTask) SetMemoryLimit(memoryLimit int64) {
 	task.memoryLimit = memoryLimit
 }

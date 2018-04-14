@@ -3,10 +3,12 @@ package cmd
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	. "github.com/smartystreets/goconvey/convey"
 )
 
-func TestBasicServerImplementsServer(t *testing.T) {
-	should := assert.New(t)
-	should.Implements((*Server)(nil), new(BasicServer))
+func TestBasicServer(t *testing.T) {
+	Convey("It should implements Server interface", t, func() {
+		server := new(HTMLServer)
+		So(server, ShouldImplement, (*Server)(nil))
+	})
 }
