@@ -3,8 +3,6 @@ package parsers
 import (
 	"testing"
 
-	"github.com/rs/zerolog/log"
-
 	. "github.com/smartystreets/goconvey/convey"
 )
 
@@ -21,7 +19,7 @@ func TestCodeforcesParser_ParseTaskFromHTML(t *testing.T) {
 		task, err := parser.ParseTaskFromHTML(task962A)
 		So(err, ShouldBeNil)
 		So(task, ShouldNotBeNil)
-		log.Debug().Msgf("%v", task)
+		So(task.Name(), ShouldEqual, "A. Equator")
 	})
 }
 
