@@ -26,11 +26,11 @@ type Task interface {
 
 // DefaultTask is the default implement of Task interface
 type DefaultTask struct {
-	name        string     `json:"name"`
-	description string     `json:"description"`
-	testCases   []TestCase `json:"testCases"`
-	timeLimit   int64      `json:"timeLimit"`
-	memoryLimit int64      `json:"memoryLimit"`
+	name        string     
+	description string     
+	testCases   []TestCase 
+	timeLimit   int64      
+	memoryLimit int64      
 }
 
 // SetName set task name
