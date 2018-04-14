@@ -64,6 +64,5 @@ func (s *HTMLServer) Handler(writer http.ResponseWriter, request *http.Request) 
 	writer.WriteHeader(200)
 
 	html := string(data)
-	log.Debug().Msg(html)
 	s.parseHTML(html)
 }
