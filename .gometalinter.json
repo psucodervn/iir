@@ -7,7 +7,7 @@
     "maligned",
     "gosimple"
   ],
-  "Disable": [
+  "Disables": [
     "megacheck"
   ]
 }
