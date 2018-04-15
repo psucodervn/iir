@@ -1,10 +1,16 @@
 package parsers
 
 import (
+	"errors"
 	"io"
 	"path"
 	"strings"
 	"text/template"
+)
+
+var (
+	// ErrInvalidTemplate is invalid template error
+	ErrInvalidTemplate = errors.New("invalid template")
 )
 
 // Generator is the code generator interface
@@ -13,27 +19,30 @@ type Generator interface {
 	WriteTaskToString(task Task) (string, error)
 }
 
-// DefaultGenerator is the default implement of Generator interface
-type DefaultGenerator struct {
+// FromMemoryGenerator generates code from parsed template
+type FromMemoryGenerator struct {
 	judger Judger
-	tplDir string
+	tmpl   *template.Template
+}
+
+// NewFromMemoryGenerator returns new instance of Generator
+func NewFromMemoryGenerator(judger Judger, tmpl *template.Template) Generator {
+	return &FromMemoryGenerator{
+		judger: judger,
+		tmpl:   tmpl,
+	}
 }
 
 // WriteTask writes the generated code to writer
-func (g *DefaultGenerator) WriteTask(writer io.Writer, task Task) error {
-	tmpl, err := template.ParseFiles(path.Join(g.tplDir, "main.cc.tmpl"))
-	if err != nil {
-		return err
+func (g *FromMemoryGenerator) WriteTask(writer io.Writer, task Task) error {
+	if g.tmpl == nil {
+		return ErrInvalidTemplate
 	}
-	err = tmpl.ExecuteTemplate(writer, "main", task)
-	if err != nil {
-		return err
-	}
-	return nil
+	return g.tmpl.ExecuteTemplate(writer, "main", task)
 }
 
 // WriteTaskToString returns generated code in string format
-func (g *DefaultGenerator) WriteTaskToString(task Task) (string, error) {
+func (g *FromMemoryGenerator) WriteTaskToString(task Task) (string, error) {
 	sb := &strings.Builder{}
 	if err := g.WriteTask(sb, task); err != nil {
 		return "", err
@@ -41,9 +50,33 @@ func (g *DefaultGenerator) WriteTaskToString(task Task) (string, error) {
 	return sb.String(), nil
 }
 
-// NewDefaultGenerator returns new instance of DefaultGenerator
-func NewDefaultGenerator(judger Judger, tplDir string) Generator {
-	return &DefaultGenerator{
+// FromFileGenerator generates code from file templates
+type FromFileGenerator struct {
+	judger Judger
+	tplDir string
+}
+
+// WriteTask writes the generated code to writer
+func (g *FromFileGenerator) WriteTask(writer io.Writer, task Task) error {
+	tmpl, err := template.ParseFiles(path.Join(g.tplDir, "main.cc.tmpl"))
+	if err != nil {
+		return err
+	}
+	return tmpl.ExecuteTemplate(writer, "main", task)
+}
+
+// WriteTaskToString returns generated code in string format
+func (g *FromFileGenerator) WriteTaskToString(task Task) (string, error) {
+	sb := &strings.Builder{}
+	if err := g.WriteTask(sb, task); err != nil {
+		return "", err
+	}
+	return sb.String(), nil
+}
+
+// NewFromFileGenerator returns new instance of FromFileGenerator
+func NewFromFileGenerator(judger Judger, tplDir string) Generator {
+	return &FromFileGenerator{
 		judger: judger,
 		tplDir: tplDir,
 	}
