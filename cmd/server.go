@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/psucodervn/iir/cmd/parsers"
+	"github.com/psucodervn/iir/pkg/parsers"
 
 	"github.com/rs/zerolog/log"
 

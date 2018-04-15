@@ -17,7 +17,7 @@ func NewTestCase(input, output string) *TestCase {
 
 // Task interface
 type Task interface {
-	Name() string
+	Title() string
 	Description() string
 	TestCases() []TestCase
 	TimeLimit() int64
@@ -26,16 +26,16 @@ type Task interface {
 
 // DefaultTask is the default implement of Task interface
 type DefaultTask struct {
-	name        string
+	title       string
 	description string
 	testCases   []TestCase
 	timeLimit   int64
 	memoryLimit int64
 }
 
-// SetName set task name
-func (task *DefaultTask) SetName(name string) {
-	task.name = name
+// SetTitle set task title
+func (task *DefaultTask) SetTitle(title string) {
+	task.title = title
 }
 
 // SetDescription set task description
@@ -58,9 +58,9 @@ func (task *DefaultTask) SetMemoryLimit(memoryLimit int64) {
 	task.memoryLimit = memoryLimit
 }
 
-// Name return task name
-func (task *DefaultTask) Name() string {
-	return task.name
+// Title return task title
+func (task *DefaultTask) Title() string {
+	return task.title
 }
 
 // Description return task description

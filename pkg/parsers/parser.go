@@ -1,6 +1,9 @@
 package parsers
 
-import "strings"
+import (
+	"errors"
+	"strings"
+)
 
 //go:generate stringer -type=Site -output=parser_strings.go
 
@@ -22,6 +25,7 @@ type Parser interface {
 	ParseContestFromURL(url string) (Contest, error)
 }
 
+// NewParser return new Parser instance depends on site
 func NewParser(site string) Parser {
 	switch strings.TrimSpace(strings.ToLower(site)) {
 	case "codeforces":
@@ -30,3 +34,16 @@ func NewParser(site string) Parser {
 		return nil
 	}
 }
+
+// Judger judger interface
+type Judger interface {
+	Name() string
+	TaskDir(task Task) string
+	ContestURLPatterns() []string
+	TaskURLPatterns() []string
+}
+
+var (
+	// ErrInvalidHTMLFormat is invalid HTML format error
+	ErrInvalidHTMLFormat = errors.New("invalid HTML format")
+)

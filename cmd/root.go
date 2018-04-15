@@ -17,6 +17,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"path"
 
 	"github.com/mitchellh/go-homedir"
 	"github.com/rs/zerolog"
@@ -26,6 +27,8 @@ import (
 
 var (
 	cfgFile string
+	workDir string
+	tplDir  string
 	debug   bool
 	port    int
 )
@@ -35,7 +38,7 @@ var rootCmd = &cobra.Command{
 	Use:   "irr",
 	Short: "Online judge helper",
 	Long: `irr is an online judge helper, which helps you in parsing and testing.
-'irr' is stand for Is It Rated? :).`,
+'irr' stands for Is It Rated? :).`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	RunE: mainServer,
@@ -58,11 +61,21 @@ func init() {
 	// will be global for your application.
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.irr.yaml)")
 
+	// workDir flag
+	wd, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+	rootCmd.PersistentFlags().StringVarP(&workDir, "workDir", "w", wd, "working dir")
+
+	// tplDir flag
+	rootCmd.PersistentFlags().StringVarP(&tplDir, "tplDir", "t", path.Join(wd, "templates"), "templates dir")
+
 	// debug flag
-	rootCmd.PersistentFlags().BoolVarP(&debug, "debug", "d", false, "Set debug flag")
+	rootCmd.PersistentFlags().BoolVarP(&debug, "debug", "d", false, "debug flag (default is false)")
 
 	// listening port
-	rootCmd.PersistentFlags().IntVarP(&port, "port", "p", 4243, "Port")
+	rootCmd.PersistentFlags().IntVarP(&port, "port", "p", 4243, "listener port")
 }
 
 func initLogger() {
