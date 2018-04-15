@@ -19,6 +19,7 @@ type DefaultGenerator struct {
 	tplDir string
 }
 
+// WriteTask writes the generated code to writer
 func (g *DefaultGenerator) WriteTask(writer io.Writer, task Task) error {
 	tmpl, err := template.ParseFiles(path.Join(g.tplDir, "main.cc.tmpl"))
 	if err != nil {
@@ -31,6 +32,7 @@ func (g *DefaultGenerator) WriteTask(writer io.Writer, task Task) error {
 	return nil
 }
 
+// WriteTaskToString returns generated code in string format
 func (g *DefaultGenerator) WriteTaskToString(task Task) (string, error) {
 	sb := &strings.Builder{}
 	if err := g.WriteTask(sb, task); err != nil {

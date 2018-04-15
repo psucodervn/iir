@@ -14,7 +14,7 @@ func TestDefaultGenerator(t *testing.T) {
 }
 
 func TestDefaultGenerator_WriteTaskToString(t *testing.T) {
-	judger := new(CodeforcesJudger)
+	judger := new(Codeforces)
 	task := &DefaultTask{
 		title: "Hello World!",
 	}

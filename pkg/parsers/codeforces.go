@@ -53,21 +53,26 @@ func (*CodeforcesParser) ParseContestFromURL(url string) (Contest, error) {
 	panic("implement me")
 }
 
-type CodeforcesJudger struct {
+// Codeforces is the Codeforces judger
+type Codeforces struct {
 }
 
-func (*CodeforcesJudger) Name() string {
+// Name returns name of judger
+func (*Codeforces) Name() string {
 	panic("implement me")
 }
 
-func (*CodeforcesJudger) TaskDir(task Task) string {
+// TaskDir generates task dir
+func (*Codeforces) TaskDir(task Task) string {
 	panic("implement me")
 }
 
-func (*CodeforcesJudger) ContestURLPatterns() []string {
+// ContestURLPatterns contains list of valid contest url regexp
+func (*Codeforces) ContestURLPatterns() []string {
 	panic("implement me")
 }
 
-func (*CodeforcesJudger) TaskURLPatterns() []string {
+// TaskURLPatterns contains list of valid task url regexp
+func (*Codeforces) TaskURLPatterns() []string {
 	panic("implement me")
 }
