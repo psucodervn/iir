@@ -59,6 +59,7 @@ var strMainCCTmpl = `{{ define "main" }}
 using namespace std;
 
 int main(argv int, argc* []char) {
+  ios::sync_with_stdio(false); cin.tie(nullptr);
   return 0;
 }
 

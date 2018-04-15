@@ -61,8 +61,11 @@ func (s *HTMLServer) Handler(writer http.ResponseWriter, request *http.Request) 
 		log.Error().Err(err).Msg("ReadAll body")
 		return
 	}
-	writer.WriteHeader(200)
 
 	html := string(data)
-	s.parseHTML(html)
+	if s.parseHTML(html) != nil {
+		writer.WriteHeader(500)
+	} else {
+		writer.WriteHeader(200)
+	}
 }
