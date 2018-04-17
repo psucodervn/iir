@@ -54,12 +54,13 @@ func Execute() {
 }
 
 func init() {
+	viper.BindPFlags(rootCmd.Flags())
 	cobra.OnInitialize(initConfig, initLogger)
 
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.irr.yaml)")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $PWD/.irr.yaml)")
 
 	// workDir flag
 	wd, err := os.Getwd()
@@ -98,6 +99,8 @@ func initConfig() {
 			os.Exit(1)
 		}
 
+		// Search config in current working dir with name ".irr" (without extension).
+		viper.AddConfigPath(".")
 		// Search config in home directory with name ".irr" (without extension).
 		viper.AddConfigPath(home)
 		viper.SetConfigName(".irr")
@@ -108,5 +111,8 @@ func initConfig() {
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Println("Using config file:", viper.ConfigFileUsed())
+		if !rootCmd.PersistentFlags().Lookup("debug").Changed {
+			debug = viper.GetBool("debug")
+		}
 	}
 }

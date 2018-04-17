@@ -63,6 +63,7 @@ func (s *HTMLServer) Handler(writer http.ResponseWriter, request *http.Request) 
 	}
 
 	html := string(data)
+	log.Debug().Msg(html)
 	if s.parseHTML(html) != nil {
 		writer.WriteHeader(500)
 	} else {
