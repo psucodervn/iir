@@ -19,6 +19,8 @@ import (
 	"os"
 	"path"
 
+	"github.com/psucodervn/iir/pkg/parsers"
+
 	"github.com/mitchellh/go-homedir"
 	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
@@ -26,11 +28,12 @@ import (
 )
 
 var (
-	cfgFile string
-	workDir string
-	tplDir  string
-	debug   bool
-	port    int
+	cfgFile    string
+	workDir    string
+	tplDir     string
+	debug      bool
+	port       int
+	serverType string
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -55,7 +58,7 @@ func Execute() {
 
 func init() {
 	viper.BindPFlags(rootCmd.Flags())
-	cobra.OnInitialize(initConfig, initLogger)
+	cobra.OnInitialize(initConfig, initLogger, initParsers)
 
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
@@ -70,13 +73,21 @@ func init() {
 	rootCmd.PersistentFlags().StringVarP(&workDir, "workDir", "w", wd, "working dir")
 
 	// tplDir flag
-	rootCmd.PersistentFlags().StringVarP(&tplDir, "tplDir", "t", path.Join(wd, "templates"), "templates dir")
+	rootCmd.PersistentFlags().StringVar(&tplDir, "tplDir", path.Join(wd, "templates"), "templates dir")
 
 	// debug flag
 	rootCmd.PersistentFlags().BoolVarP(&debug, "debug", "d", false, "debug flag (default is false)")
 
 	// listening port
 	rootCmd.PersistentFlags().IntVarP(&port, "port", "p", 4243, "listener port")
+
+	// parser type
+	rootCmd.PersistentFlags().StringVarP(&serverType, "type", "t", "json", "server type (json, html)")
+}
+
+func initParsers() {
+	parsers.SetWorkingDir(workDir)
+	parsers.SetTemplatesDir(tplDir)
 }
 
 func initLogger() {
@@ -113,6 +124,12 @@ func initConfig() {
 		fmt.Println("Using config file:", viper.ConfigFileUsed())
 		if !rootCmd.PersistentFlags().Lookup("debug").Changed {
 			debug = viper.GetBool("debug")
+		}
+		if !rootCmd.PersistentFlags().Lookup("workDir").Changed {
+			workDir = viper.GetString("workDir")
+		}
+		if !rootCmd.PersistentFlags().Lookup("tplDir").Changed {
+			tplDir = viper.GetString("tplDir")
 		}
 	}
 }

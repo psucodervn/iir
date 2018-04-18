@@ -15,36 +15,34 @@ var (
 
 // Generator is the code generator interface
 type Generator interface {
-	WriteTask(writer io.Writer, task Task) error
-	WriteTaskToString(task Task) (string, error)
+	WriteTask(writer io.Writer, task Task, tmplName string) error
+	WriteTaskToString(task Task, tmplName string) (string, error)
 }
 
 // FromMemoryGenerator generates code from parsed template
 type FromMemoryGenerator struct {
-	judger Judger
-	tmpl   *template.Template
+	tmpl *template.Template
 }
 
 // NewFromMemoryGenerator returns new instance of Generator
-func NewFromMemoryGenerator(judger Judger, tmpl *template.Template) Generator {
+func NewFromMemoryGenerator(tmpl *template.Template) Generator {
 	return &FromMemoryGenerator{
-		judger: judger,
-		tmpl:   tmpl,
+		tmpl: tmpl,
 	}
 }
 
 // WriteTask writes the generated code to writer
-func (g *FromMemoryGenerator) WriteTask(writer io.Writer, task Task) error {
+func (g *FromMemoryGenerator) WriteTask(writer io.Writer, task Task, tmplName string) error {
 	if g.tmpl == nil {
 		return ErrInvalidTemplate
 	}
-	return g.tmpl.ExecuteTemplate(writer, "main", task)
+	return g.tmpl.ExecuteTemplate(writer, tmplName, task)
 }
 
 // WriteTaskToString returns generated code in string format
-func (g *FromMemoryGenerator) WriteTaskToString(task Task) (string, error) {
+func (g *FromMemoryGenerator) WriteTaskToString(task Task, tmplName string) (string, error) {
 	sb := &strings.Builder{}
-	if err := g.WriteTask(sb, task); err != nil {
+	if err := g.WriteTask(sb, task, tmplName); err != nil {
 		return "", err
 	}
 	return sb.String(), nil
@@ -57,18 +55,18 @@ type FromFileGenerator struct {
 }
 
 // WriteTask writes the generated code to writer
-func (g *FromFileGenerator) WriteTask(writer io.Writer, task Task) error {
+func (g *FromFileGenerator) WriteTask(writer io.Writer, task Task, tmplName string) error {
 	tmpl, err := template.ParseFiles(path.Join(g.tplDir, "main.cc.tmpl"))
 	if err != nil {
 		return err
 	}
-	return tmpl.ExecuteTemplate(writer, "main", task)
+	return tmpl.ExecuteTemplate(writer, tmplName, task)
 }
 
 // WriteTaskToString returns generated code in string format
-func (g *FromFileGenerator) WriteTaskToString(task Task) (string, error) {
+func (g *FromFileGenerator) WriteTaskToString(task Task, tmplName string) (string, error) {
 	sb := &strings.Builder{}
-	if err := g.WriteTask(sb, task); err != nil {
+	if err := g.WriteTask(sb, task, tmplName); err != nil {
 		return "", err
 	}
 	return sb.String(), nil

@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -15,7 +16,12 @@ import (
 )
 
 func mainServer(cmd *cobra.Command, args []string) error {
-	server := &HTMLServer{}
+	var server Server
+	if serverType == "json" {
+		server = new(JSONServer)
+	} else {
+		server = new(HTMLServer)
+	}
 	http.HandleFunc("/", server.Handler)
 	addr := fmt.Sprintf(":%d", port)
 	err := http.ListenAndServe(addr, nil)
@@ -65,6 +71,39 @@ func (s *HTMLServer) Handler(writer http.ResponseWriter, request *http.Request) 
 	html := string(data)
 	log.Debug().Msg(html)
 	if s.parseHTML(html) != nil {
+		writer.WriteHeader(500)
+	} else {
+		writer.WriteHeader(200)
+	}
+}
+
+// JSONServer is basic implement of Server interface
+// It receive json from web extension
+type JSONServer struct {
+}
+
+func (s *JSONServer) parseJSON(data []byte) error {
+	var task parsers.Task
+	if err := json.Unmarshal(data, &task); err != nil {
+		return err
+	}
+
+	if err := parsers.AddTask(task); err != nil {
+		log.Error().Err(err).Msg("AddTask")
+		log.Info().Msgf("%#v", task)
+	}
+	return nil
+}
+
+// Handler is the handler function of server
+func (s *JSONServer) Handler(writer http.ResponseWriter, request *http.Request) {
+	data, err := ioutil.ReadAll(request.Body)
+	if err != nil {
+		log.Error().Err(err).Msg("ReadAll body")
+		return
+	}
+
+	if s.parseJSON(data) != nil {
 		writer.WriteHeader(500)
 	} else {
 		writer.WriteHeader(200)

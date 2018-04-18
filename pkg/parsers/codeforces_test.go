@@ -19,8 +19,8 @@ func TestCodeforcesParser_ParseTaskFromHTML(t *testing.T) {
 		task, err := parser.ParseTaskFromHTML(task962A)
 		So(err, ShouldBeNil)
 		So(task, ShouldNotBeNil)
-		So(task.Title(), ShouldEqual, "A. Equator")
-		So(task.TestCases(), ShouldHaveLength, 2)
+		So(task.Name, ShouldEqual, "A. Equator")
+		So(task.Tests, ShouldHaveLength, 2)
 	})
 	Convey("It should return error when parsing invalid html", t, func() {
 		task, err := parser.ParseTaskFromHTML("invalid html")

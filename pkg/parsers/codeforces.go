@@ -1,6 +1,10 @@
 package parsers
 
 import (
+	"fmt"
+	"io/ioutil"
+	"os"
+	"path"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
@@ -11,7 +15,7 @@ type CodeforcesParser struct {
 }
 
 // ParseTaskFromHTML parse Codeforces task from html
-func (*CodeforcesParser) ParseTaskFromHTML(html string) (Task, error) {
+func (*CodeforcesParser) ParseTaskFromHTML(html string) (*Task, error) {
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(html))
 	if err != nil {
 		return nil, err
@@ -32,14 +36,14 @@ func (*CodeforcesParser) ParseTaskFromHTML(html string) (Task, error) {
 			Output: strings.Replace(output, "<br/>", "\n", -1),
 		}
 	}
-	return &DefaultTask{
-		title:     title,
-		testCases: testCases,
+	return &Task{
+		Name:  title,
+		Tests: testCases,
 	}, nil
 }
 
 // ParseTaskFromURL parse Codeforces task from url
-func (*CodeforcesParser) ParseTaskFromURL(url string) (Task, error) {
+func (*CodeforcesParser) ParseTaskFromURL(url string) (*Task, error) {
 	panic("implement me")
 }
 
@@ -57,22 +61,65 @@ func (*CodeforcesParser) ParseContestFromURL(url string) (Contest, error) {
 type Codeforces struct {
 }
 
+// WriteTask write codeforces task
+func (j *Codeforces) WriteTask(task Task) error {
+	// make dir
+	dir := path.Join(append([]string{workingDir, task.Site.String()}, task.Dirs...)...)
+	if err := os.MkdirAll(dir, 0755|os.ModeDir); err != nil {
+		return err
+	}
+
+	// create generator
+	g := NewFromFileGenerator(j, templateDir)
+
+	// generate main file
+	mainCode, err := g.WriteTaskToString(task, "main.cc")
+	if err != nil {
+		return err
+	}
+	if err = ioutil.WriteFile(path.Join(dir, "main.cc"), []byte(mainCode), 0644); err != nil {
+		return err
+	}
+
+	// generate test script
+	testScript, err := g.WriteTaskToString(task, "test.sh")
+	if err != nil {
+		return err
+	}
+	if err = ioutil.WriteFile(path.Join(dir, "test.sh"), []byte(testScript), 0755); err != nil {
+		return err
+	}
+
+	return j.writeTests(task.Tests, dir)
+}
+
+func (j *Codeforces) writeTests(tests []TestCase, dir string) error {
+	// make dir
+	testDir := path.Join(dir, "tests")
+	if err := os.Mkdir(testDir, 0755|os.ModeDir); err != nil && !os.IsExist(err) {
+		return err
+	}
+
+	// write to files
+	for idx, test := range tests {
+		// write input
+		if err := ioutil.WriteFile(
+			path.Join(testDir, fmt.Sprintf("%d.in", idx+1)), []byte(test.Input), 0644,
+		); err != nil {
+			return err
+		}
+		// write output
+		if err := ioutil.WriteFile(
+			path.Join(testDir, fmt.Sprintf("%d.out", idx+1)), []byte(test.Output), 0644,
+		); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 // Name returns name of judger
-func (*Codeforces) Name() string {
-	panic("implement me")
-}
-
-// TaskDir generates task dir
-func (*Codeforces) TaskDir(task Task) string {
-	panic("implement me")
-}
-
-// ContestURLPatterns contains list of valid contest url regexp
-func (*Codeforces) ContestURLPatterns() []string {
-	panic("implement me")
-}
-
-// TaskURLPatterns contains list of valid task url regexp
-func (*Codeforces) TaskURLPatterns() []string {
+func (j *Codeforces) Name() string {
 	panic("implement me")
 }

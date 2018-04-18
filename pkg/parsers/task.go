@@ -15,70 +15,16 @@ func NewTestCase(input, output string) *TestCase {
 	return tc
 }
 
-// Task interface
-type Task interface {
-	Title() string
-	Description() string
-	TestCases() []TestCase
-	TimeLimit() int64
-	MemoryLimit() int64
-}
-
-// DefaultTask is the default implement of Task interface
-type DefaultTask struct {
-	title       string
-	description string
-	testCases   []TestCase
-	timeLimit   int64
-	memoryLimit int64
-}
-
-// SetTitle set task title
-func (task *DefaultTask) SetTitle(title string) {
-	task.title = title
-}
-
-// SetDescription set task description
-func (task *DefaultTask) SetDescription(description string) {
-	task.description = description
-}
-
-// SetTestCases set task test cases
-func (task *DefaultTask) SetTestCases(testCases []TestCase) {
-	task.testCases = testCases
-}
-
-// SetTimeLimit set task time limit
-func (task *DefaultTask) SetTimeLimit(timeLimit int64) {
-	task.timeLimit = timeLimit
-}
-
-// SetMemoryLimit set task memory limit
-func (task *DefaultTask) SetMemoryLimit(memoryLimit int64) {
-	task.memoryLimit = memoryLimit
-}
-
-// Title return task title
-func (task *DefaultTask) Title() string {
-	return task.title
-}
-
-// Description return task description
-func (task *DefaultTask) Description() string {
-	panic("implement me")
-}
-
-// TestCases return all test case
-func (task *DefaultTask) TestCases() []TestCase {
-	return task.testCases
-}
-
-// TimeLimit return time limit in nanosecond unit
-func (task *DefaultTask) TimeLimit() int64 {
-	return task.timeLimit
-}
-
-// MemoryLimit return memory limit in Byte unit
-func (task *DefaultTask) MemoryLimit() int64 {
-	return task.memoryLimit
+// Task task in json format
+type Task struct {
+	Site        Site
+	Name        string
+	URL         string `json:"url"`
+	Input       string
+	Output      string
+	MemoryLimit string
+	TimeLimit   string
+	Tests       []TestCase
+	Dirs        []string
+	Meta        map[string]interface{}
 }

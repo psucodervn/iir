@@ -16,8 +16,8 @@ func TestDefaultGenerator(t *testing.T) {
 
 func TestDefaultGenerator_WriteTaskToString_FromFile(t *testing.T) {
 	judger := new(Codeforces)
-	task := &DefaultTask{
-		title: "Hello World!",
+	task := Task{
+		Name: "Hello World!",
 	}
 	tmplDir := "/Users/psucoder/projects/go/src/github.com/psucodervn/iir/templates"
 	if _, err := os.Stat(tmplDir); err != nil {
@@ -34,8 +34,8 @@ func TestDefaultGenerator_WriteTaskToString_FromFile(t *testing.T) {
 
 func TestDefaultGenerator_WriteTaskToString_FromMemory(t *testing.T) {
 	judger := new(Codeforces)
-	task := &DefaultTask{
-		title: "Hello World!",
+	task := Task{
+		Name: "Hello World!",
 	}
 	tmpl, err := template.New("main").Parse(strMainCCTmpl)
 	if err != nil {
@@ -53,7 +53,7 @@ func TestDefaultGenerator_WriteTaskToString_FromMemory(t *testing.T) {
 
 var strMainCCTmpl = `{{ define "main" }}
 /*
-  Task: {{ .Title }}
+  Task: {{ .Name }}
 */
 #include <bits/stdc++.h>
 using namespace std;
