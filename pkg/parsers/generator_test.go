@@ -26,14 +26,13 @@ func TestDefaultGenerator_WriteTaskToString_FromFile(t *testing.T) {
 	g := NewFromFileGenerator(judger, tmplDir)
 	Convey("It should return correct generated code", t, func() {
 		So(task, ShouldNotBeNil)
-		str, err := g.WriteTaskToString(task)
+		str, err := g.WriteTaskToString(task, "main.cc")
 		So(err, ShouldBeNil)
 		So(str, ShouldNotBeEmpty)
 	})
 }
 
 func TestDefaultGenerator_WriteTaskToString_FromMemory(t *testing.T) {
-	judger := new(Codeforces)
 	task := Task{
 		Name: "Hello World!",
 	}
@@ -42,16 +41,16 @@ func TestDefaultGenerator_WriteTaskToString_FromMemory(t *testing.T) {
 		t.Skip("parse template failed")
 	}
 
-	g := NewFromMemoryGenerator(judger, tmpl)
+	g := NewFromMemoryGenerator(tmpl)
 	Convey("It should return correct generated code", t, func() {
 		So(task, ShouldNotBeNil)
-		str, err := g.WriteTaskToString(task)
+		str, err := g.WriteTaskToString(task, "main.cc")
 		So(err, ShouldBeNil)
 		So(str, ShouldNotBeEmpty)
 	})
 }
 
-var strMainCCTmpl = `{{ define "main" }}
+var strMainCCTmpl = `{{ define "main.cc" }}
 /*
   Task: {{ .Name }}
 */
