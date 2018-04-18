@@ -57,7 +57,7 @@ func Execute() {
 }
 
 func init() {
-	viper.BindPFlags(rootCmd.Flags())
+	_ = viper.BindPFlags(rootCmd.Flags())
 	cobra.OnInitialize(initConfig, initLogger, initParsers)
 
 	// Here you will define your flags and configuration settings.
