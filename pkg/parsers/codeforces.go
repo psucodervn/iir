@@ -1,6 +1,7 @@
 package parsers
 
 import (
+	"bytes"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -94,6 +95,26 @@ func (j *Codeforces) WriteTask(task Task) error {
 }
 
 func (j *Codeforces) writeTests(tests []TestCase, dir string) error {
+	lines := bytes.Buffer{}
+
+	// write to files
+	for _, test := range tests {
+		if _, err := lines.WriteString(test.Input); err != nil {
+			return err
+		}
+		lines.WriteString("\n")
+		if _, err := lines.WriteString(test.Output); err != nil {
+			return err
+		}
+		lines.WriteString("\n-=-=-=\n")
+	}
+
+	// write to tests.io
+	err := ioutil.WriteFile(path.Join(dir, "test.data"), lines.Bytes(), 0644)
+	return err
+}
+
+func (j *Codeforces) writeTestsOld(tests []TestCase, dir string) error {
 	// make dir
 	testDir := path.Join(dir, "tests")
 	if err := os.Mkdir(testDir, 0755|os.ModeDir); err != nil && !os.IsExist(err) {

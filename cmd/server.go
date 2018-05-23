@@ -92,6 +92,8 @@ func (s *JSONServer) parseJSON(data []byte) error {
 		log.Error().Err(err).Msg("AddTask")
 		log.Info().Msgf("%#v", task)
 	}
+
+	log.Info().Msgf("Parse task %v done.", task.Name)
 	return nil
 }
 
