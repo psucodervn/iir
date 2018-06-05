@@ -30,6 +30,7 @@ import (
 var (
 	cfgFile    string
 	workDir    string
+	srcDir     string
 	tplDir     string
 	debug      bool
 	port       int
@@ -72,6 +73,9 @@ func init() {
 	}
 	rootCmd.PersistentFlags().StringVarP(&workDir, "workDir", "w", wd, "working dir")
 
+	// srcDir flag
+	rootCmd.PersistentFlags().StringVar(&srcDir, "srcDir", path.Join(wd, "src"), "source dir")
+
 	// tplDir flag
 	rootCmd.PersistentFlags().StringVar(&tplDir, "tplDir", path.Join(wd, "templates"), "templates dir")
 
@@ -87,6 +91,7 @@ func init() {
 
 func initParsers() {
 	parsers.SetWorkingDir(workDir)
+	parsers.SetSourceDir(srcDir)
 	parsers.SetTemplatesDir(tplDir)
 }
 
@@ -130,6 +135,9 @@ func initConfig() {
 		}
 		if !rootCmd.PersistentFlags().Lookup("tplDir").Changed {
 			tplDir = viper.GetString("tplDir")
+		}
+		if !rootCmd.PersistentFlags().Lookup("srcDir").Changed {
+			srcDir = viper.GetString("srcDir")
 		}
 	}
 }

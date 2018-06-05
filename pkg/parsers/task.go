@@ -15,15 +15,25 @@ func NewTestCase(input, output string) *TestCase {
 	return tc
 }
 
+// DataFormat format of input or output data
+type DataFormat struct {
+	Type     string
+	FileName string `json:"fileName"`
+	Pattern  string
+}
+
 // Task task in json format
 type Task struct {
-	Site        Site
+	Site        string
+	ID          string `json:"id"`
 	Name        string
+	Group       string
 	URL         string `json:"url"`
-	Input       string
-	Output      string
-	MemoryLimit string
-	TimeLimit   string
+	Input       DataFormat
+	Output      DataFormat
+	MemoryLimit int
+	TimeLimit   int
+	TestType    string `json:"testType"`
 	Tests       []TestCase
 	Dirs        []string
 	Meta        map[string]interface{}

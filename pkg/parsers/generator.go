@@ -60,7 +60,14 @@ func (g *FromFileGenerator) WriteTask(writer io.Writer, task Task, tmplName stri
 	if err != nil {
 		return err
 	}
-	return tmpl.ExecuteTemplate(writer, tmplName, task)
+	var data = struct {
+		Task
+		OutDir string
+	}{
+		task,
+		outDir,
+	}
+	return tmpl.ExecuteTemplate(writer, tmplName, data)
 }
 
 // WriteTaskToString returns generated code in string format

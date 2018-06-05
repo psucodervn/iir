@@ -1,6 +1,6 @@
-{{ define "main.cc" }}/*
+{{- define "main.cc" }}
+/*
   Task: {{ .Name }}
-  Site: {{ .Site }}
   Link: {{ .URL }}
 */
 #include <bits/stdc++.h>
@@ -12,79 +12,92 @@ template<typename T, typename... Args> void err(istream_iterator<string> it, T a
 #define dba(ar) { cerr << #ar << " = ["; for (auto x : ar) cerr << " " << x; cerr << "]" << endl; }
 typedef long long int64;
 
+void solve() {
+
+}
+
 int main(int argc, char* argv[]) {
   ios::sync_with_stdio(false); cin.tie(nullptr);
-  {{- if ne .Input "stdin" }}
-  freopen("{{ .Input }}", "r", stdin);
+  {{- if ne .Input.Type "stdin" }}
+  freopen("{{ .Input.FileName }}", "r", stdin);
   {{- end }}
-  {{- if ne .Output "stdout" }}
-  freopen("{{ .Output }}", "r", stdout);
+  {{- if ne .Output.Type "stdout" }}
+  freopen("{{ .Output.FileName }}", "w", stdout);
   {{- end }}
+  solve();
   return 0;
 }
 {{ end }}
 
-{{- define "test.sh" }}#!/bin/bash
-if ! g++ -std=c++14 -Wall main.cc -o main; then
-    exit
-fi
+{{- define "test.sh" }}
+#!/bin/bash
+if ! g++ -std=c++14 -Wall main.cc -o main; then exit; fi
+TASK_IN={{ .Input.FileName }}
+TASK_OUT={{ .Output.FileName }}
 INPUT_EXT=in
+ANSWER_EXT=ans
 OUTPUT_EXT=out
-MY_EXT=res
 
-id=0
-begin=1
-exts=("in" "out")
-ex_id=0
-mkdir -p tests
-while IFS='' read -r line || [[ -n "$line" ]]; do
-  if [ "$line" == "-=-=-=" ]; then
-    let ex_id=0;
-    let begin=1;
-  elif [ -z "$line" ]; then
-    let begin=1;
-    let ex_id=1;
-  else
-    if [ $begin -eq 1 ]; then
-      if [ $ex_id -eq 0 ]; then
-        let id+=1;
-      fi
-      let begin=0;
-      echo $line > tests/$id.${exts[$ex_id]};
+function gen_tests() {
+  local id=0; local begin=1; local ex_id=0
+  local exts=($INPUT_EXT $ANSWER_EXT)
+  rm -R $2/* &> /dev/null
+  mkdir -p $2
+  while IFS='' read -r line || [[ -n "$line" ]]; do
+    if [ "$line" == "-=-=-=" ]; then
+      let ex_id=0;
+      let begin=1;
+    elif [ -z "$line" ]; then
+      let begin=1;
+      let ex_id=1;
     else
-      echo $line >> tests/$id.${exts[$ex_id]};
+      if [ $begin -eq 1 ]; then
+        if [ $ex_id -eq 0 ]; then let id+=1; fi
+        let begin=0;
+        echo $line > tests/$id.${exts[$ex_id]};
+      else
+        echo $line >> tests/$id.${exts[$ex_id]};
+      fi
+    fi
+  done < $1
+}
+
+function run_test() {
+  local TASK_ANS=$1;
+  local TEST_NUM=$2;
+  if ! `which gtime` -o time.out -f "(%es)" ../main < $TASK_IN > $TASK_OUT; then
+    echo [1m[31mSample test \#$TEST_NUM: Runtime Error[0m `cat time.out`
+    echo ========================================
+    echo Sample Input \#$TEST_NUM
+    cat $TASK_IN
+  else
+    if diff --brief --strip-trailing-cr --ignore-space-change $TASK_OUT $TASK_ANS; then
+      echo [1m[32mSample test \#$TEST_NUM: Accepted[0m `cat time.out`
+    else
+      echo [1m[31mSample test \#$TEST_NUM: Wrong Answer[0m `cat time.out`
+      echo ========================================
+      echo Sample Input \#$TEST_NUM
+      cat $TASK_IN
+      echo ========================================
+      echo Sample Output \#$TEST_NUM
+      cat $TASK_ANS
+      echo ========================================
+      echo My Output \#$TEST_NUM
+      cat $TASK_OUT
+      echo ========================================
     fi
   fi
-done < "test.data"
+}
 
+gen_tests test.data tests
 cd tests
-
-rm -R *$MY_EXT &>/dev/null
-for test_file in *.$INPUT_EXT
-do
-    i=$((${#INPUT_EXT}))
-    test_case=${test_file:0:$i-1}
-    if ! `which gtime` -o time.out -f "(%es)" ../main < $test_case.$INPUT_EXT > $test_case.$MY_EXT; then
-        echo [1m[31mSample test \#$test_case: Runtime Error[0m `cat time.out`
-        echo ========================================
-        echo Sample Input \#$test_case
-        cat $test_case.$INPUT_EXT
-    else
-        if diff --brief --strip-trailing-cr --ignore-space-change $test_case.$MY_EXT $test_case.$OUTPUT_EXT; then
-            echo [1m[32mSample test \#$test_case: Accepted[0m `cat time.out`
-        else
-            echo [1m[31mSample test \#$test_case: Wrong Answer[0m `cat time.out`
-            echo ========================================
-            echo Sample Input \#$test_case
-            cat $test_case.$INPUT_EXT
-            echo ========================================
-            echo Sample Output \#$test_case
-            cat $test_case.$OUTPUT_EXT
-            echo ========================================
-            echo My Output \#$test_case
-            cat $test_case.$MY_EXT
-            echo ========================================
-        fi
-    fi
+for test_file in *.$INPUT_EXT; do
+  i=$((${#INPUT_EXT}))
+  test_case=${test_file:0:$i-1}
+  cp $test_file $TASK_IN
+  run_test $test_case.$ANSWER_EXT $test_case
 done
+
+cd ..
+rm -r ./tests main
 {{- end }}

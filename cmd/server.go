@@ -83,19 +83,24 @@ type JSONServer struct {
 }
 
 func (s *JSONServer) parseJSON(data []byte) error {
+	if strings.HasPrefix(string(data), "json\n") {
+		data = data[5:]
+	}
 	var task parsers.Task
 	if err := json.Unmarshal(data, &task); err != nil {
-		log.Error().Err(err).Msg("AddTask")
-		log.Info().Msgf("%s", string(data))
+		log.Error().Err(err).Msg("parse JSON failed")
+		log.Debug().Msgf("%s", string(data))
 		return err
 	}
 
 	if err := parsers.AddTask(task); err != nil {
-		log.Error().Err(err).Msg("AddTask")
-		log.Info().Msgf("%#v", task)
+		log.Error().Err(err).Msg("AddTask failed")
+		log.Debug().Msgf("%v", task)
+		return err
 	}
 
-	log.Info().Msgf("Parse task %v done.", task.Name)
+	// log.Info().Msgf("Parse task %v done.", task.Name)
+	fmt.Printf("Task '%s' was parsed at %s.\n", task.Name, srcDir)
 	return nil
 }
 

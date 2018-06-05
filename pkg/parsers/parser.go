@@ -2,26 +2,15 @@ package parsers
 
 import (
 	"errors"
+	"path"
 	"strings"
 )
-
-// Site type
-type Site string
-
-var (
-	// SiteCodeforces site codeforces
-	SiteCodeforces Site = "codeforces"
-	// SiteKattis site kattis
-	SiteKattis Site = "kattis"
-)
-
-func (s Site) String() string {
-	return string(s)
-}
 
 var (
 	templateDir string
 	workingDir  string
+	outDir      string
+	sourceDir   string
 )
 
 // SetTemplatesDir set templates dir
@@ -32,6 +21,12 @@ func SetTemplatesDir(tplDir string) {
 // SetWorkingDir set working dir
 func SetWorkingDir(workDir string) {
 	workingDir = workDir
+	outDir = path.Join(workingDir, "out")
+}
+
+// SetSourceDir set sources dir
+func SetSourceDir(srcDir string) {
+	sourceDir = srcDir
 }
 
 // Parser is the parser interface
@@ -67,13 +62,6 @@ var (
 
 // AddTask add a ask with json format
 func AddTask(task Task) error {
-	var judger Judger
-	switch task.Site {
-	case SiteCodeforces:
-		judger = new(Codeforces)
-	default:
-		return ErrSiteNotSupport
-	}
-
+	var judger Judger = new(Codeforces)
 	return judger.WriteTask(task)
 }

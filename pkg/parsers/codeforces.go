@@ -65,7 +65,10 @@ type Codeforces struct {
 // WriteTask write codeforces task
 func (j *Codeforces) WriteTask(task Task) error {
 	// make dir
-	dir := path.Join(append([]string{workingDir, task.Site.String()}, task.Dirs...)...)
+	if len(task.Dirs) == 0 {
+		task.Dirs = []string{task.Site, task.Group, task.Name}
+	}
+	dir := path.Join(append([]string{sourceDir}, task.Dirs...)...)
 	if err := os.MkdirAll(dir, 0755|os.ModeDir); err != nil {
 		return err
 	}

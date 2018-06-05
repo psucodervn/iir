@@ -1,3 +1,4 @@
 debug: true
 workDir: /Users/psucoder/projects/oj/
-tplDir: /Users/psucoder/projects/go/src/github.com/psucodervn/iir/templates/
+srcDir: /Users/psucoder/projects/oj/src/
+tplDir: /Users/psucoder/projects/oj/templates/
