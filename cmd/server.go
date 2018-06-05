@@ -85,6 +85,8 @@ type JSONServer struct {
 func (s *JSONServer) parseJSON(data []byte) error {
 	var task parsers.Task
 	if err := json.Unmarshal(data, &task); err != nil {
+		log.Error().Err(err).Msg("AddTask")
+		log.Info().Msgf("%s", string(data))
 		return err
 	}
 

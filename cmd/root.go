@@ -38,10 +38,10 @@ var (
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "irr",
+	Use:   "iir",
 	Short: "Online judge helper",
-	Long: `irr is an online judge helper, which helps you in parsing and testing.
-'irr' stands for Is It Rated? :).`,
+	Long: `iir is an online judge helper, which helps you in parsing and testing.
+'iir' stands for Is It Rated? :).`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	RunE: mainServer,
@@ -63,7 +63,7 @@ func init() {
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $PWD/.irr.yaml)")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $PWD/.iir.yaml)")
 
 	// workDir flag
 	wd, err := os.Getwd()
@@ -114,7 +114,7 @@ func initConfig() {
 		viper.AddConfigPath(".")
 		// Search config in home directory with name ".irr" (without extension).
 		viper.AddConfigPath(home)
-		viper.SetConfigName(".irr")
+		viper.SetConfigName(".iir")
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match
